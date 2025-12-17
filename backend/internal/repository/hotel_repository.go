@@ -6,19 +6,25 @@ import (
 	"gorm.io/gorm"
 )
 
-type HotelRepository struct {
+type HotelRepository interface {
+	CreateHotel(hotel *domain.Hotel) error
+	GetAllHotels() ([]domain.Hotel, error)
+	GetHotelById(id string) (*domain.Hotel, error)
+}
+
+type hotelRepository struct {
 	db *gorm.DB
 }
 
-func NewHotelRepository(db *gorm.DB) *HotelRepository {
-	return &HotelRepository{db: db}
+func NewHotelRepository(db *gorm.DB) HotelRepository {
+	return &hotelRepository{db: db}
 }
 
-func (r *HotelRepository) CreateHotel(hotel *domain.Hotel) error {
+func (r *hotelRepository) CreateHotel(hotel *domain.Hotel) error {
 	return r.db.Create(hotel).Error
 }
 
-func (r *HotelRepository) GetAllHotels() ([]domain.Hotel, error) {
+func (r *hotelRepository) GetAllHotels() ([]domain.Hotel, error) {
 	var hotels []domain.Hotel
 	if err := r.db.Preload("Rooms").Preload("Rooms.Facilities").Find(&hotels).Error; err != nil {
 		return nil, err
@@ -26,7 +32,7 @@ func (r *HotelRepository) GetAllHotels() ([]domain.Hotel, error) {
 	return hotels, nil
 }
 
-func (r *HotelRepository) GetHotelById(id string) (*domain.Hotel, error) {
+func (r *hotelRepository) GetHotelById(id string) (*domain.Hotel, error) {
 	var hotel domain.Hotel
 	if err := r.db.Preload("Rooms").Preload("Rooms.Facilities").First(&hotel, "id = ?", id).Error; err != nil {
 		return nil, err

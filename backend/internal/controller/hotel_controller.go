@@ -9,10 +9,10 @@ import (
 )
 
 type HotelController struct {
-	hotelService *service.HotelService
+	hotelService service.HotelService
 }
 
-func NewHotelController(hotelService *service.HotelService) *HotelController {
+func NewHotelController(hotelService service.HotelService) *HotelController {
 	return &HotelController{hotelService: hotelService}
 }
 

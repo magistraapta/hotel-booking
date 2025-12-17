@@ -3,6 +3,7 @@ package controller
 import (
 	"backend/internal/domain"
 	"backend/internal/service"
+	"backend/internal/shared"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -21,27 +22,27 @@ func (c *HotelController) CreateHotel(ctx *gin.Context) {
 	ctx.ShouldBindJSON(&hotel)
 	err := c.hotelService.CreateHotel(&hotel)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, shared.ApiResponse{Error: err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusCreated, gin.H{"message": "Hotel created successfully"})
+	ctx.JSON(http.StatusCreated, shared.ApiResponse{Message: "Hotel created successfully", Data: hotel})
 }
 
 func (c *HotelController) GetAllHotels(ctx *gin.Context) {
 	hotels, err := c.hotelService.GetAllHotels()
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, shared.ApiResponse{Error: err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"message": "Hotels fetched successfully", "hotels": hotels})
+	ctx.JSON(http.StatusOK, shared.ApiResponse{Message: "Hotels fetched successfully", Data: hotels})
 }
 
 func (c *HotelController) GetHotelById(ctx *gin.Context) {
 	id := ctx.Param("id")
 	hotel, err := c.hotelService.GetHotelById(id)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, shared.ApiResponse{Error: err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"message": "Hotel fetched successfully", "hotel": hotel})
+	ctx.JSON(http.StatusOK, shared.ApiResponse{Message: "Hotel fetched successfully", Data: hotel})
 }

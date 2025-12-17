@@ -3,6 +3,7 @@ package controller
 import (
 	"backend/internal/domain"
 	"backend/internal/service"
+	"backend/internal/shared"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -21,27 +22,27 @@ func (c *BookingController) CreateBooking(ctx *gin.Context) {
 	ctx.ShouldBindJSON(&booking)
 	err := c.bookingService.CreateBooking(&booking)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, shared.ApiResponse{Error: err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusCreated, gin.H{"message": "Booking created successfully"})
+	ctx.JSON(http.StatusCreated, shared.ApiResponse{Message: "Booking created successfully", Data: booking})
 }
 
 func (c *BookingController) GetAllBookings(ctx *gin.Context) {
 	bookings, err := c.bookingService.GetAllBookings()
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, shared.ApiResponse{Error: err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"message": "Bookings fetched successfully", "bookings": bookings})
+	ctx.JSON(http.StatusOK, shared.ApiResponse{Message: "Bookings fetched successfully", Data: bookings})
 }
 
 func (c *BookingController) GetBookingById(ctx *gin.Context) {
 	id := ctx.Param("id")
 	booking, err := c.bookingService.GetBookingById(id)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, shared.ApiResponse{Error: err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"message": "Booking fetched successfully", "booking": booking})
+	ctx.JSON(http.StatusOK, shared.ApiResponse{Message: "Booking fetched successfully", Data: booking})
 }

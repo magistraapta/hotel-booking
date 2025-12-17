@@ -15,8 +15,8 @@ func main() {
 	config.SeedDatabase(db)
 
 	router := gin.Default()
-	routes.SetupRoutes(router, db)
 	routes.SetupHotelRoutes(router, db)
+	routes.SetupUserRoutes(router, db)
 
 	router.Run(":8080")
 }

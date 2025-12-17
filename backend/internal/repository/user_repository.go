@@ -2,7 +2,9 @@ package repository
 
 import (
 	"backend/internal/domain"
+	"time"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -20,7 +22,14 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 }
 
 func (r *userRepository) CreateUser(user *domain.User) error {
-	return r.db.Create(user).Error
+	user.Id = uuid.New()
+	user.CreatedAt = time.Now()
+	user.UpdatedAt = time.Now()
+	err := r.db.Create(user).Error
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (r *userRepository) GetAllUsers() ([]domain.User, error) {

@@ -1,0 +1,210 @@
+{
+	"info": {
+		"_postman_id": "hotel-booking-api",
+		"name": "Hotel Booking API",
+		"description": "API collection for Hotel Booking System",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"john_doe\",\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\",\n    \"is_admin\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/users/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								""
+							]
+						},
+						"description": "Create a new user account"
+					},
+					"response": []
+				}
+			],
+			"description": "User management endpoints"
+		},
+		{
+			"name": "Hotels",
+			"item": [
+				{
+					"name": "Create Hotel",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Grand Plaza Hotel\",\n    \"description\": \"Luxurious 5-star hotel in the heart of the city\",\n    \"address\": \"123 Main Street, Downtown, City 12345\",\n    \"rating\": 4.8\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/hotels/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"hotels",
+								""
+							]
+						},
+						"description": "Create a new hotel"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Hotels",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/hotels/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"hotels",
+								""
+							]
+						},
+						"description": "Retrieve all hotels with their rooms and facilities"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Hotel By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/hotels/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"hotels",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "hotel-uuid-here",
+									"description": "Hotel UUID"
+								}
+							]
+						},
+						"description": "Retrieve a specific hotel by ID with rooms and facilities"
+					},
+					"response": []
+				}
+			],
+			"description": "Hotel management endpoints"
+		},
+		{
+			"name": "Bookings",
+			"item": [
+				{
+					"name": "Create Booking",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_id\": \"user-uuid-here\",\n    \"hotel_id\": \"hotel-uuid-here\",\n    \"room_id\": \"room-uuid-here\",\n    \"check_in_date\": \"2025-12-20T00:00:00Z\",\n    \"check_out_date\": \"2025-12-23T00:00:00Z\",\n    \"total_price\": 450.00,\n    \"is_cancelled\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/bookings/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"bookings",
+								""
+							]
+						},
+						"description": "Create a new booking"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Bookings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/bookings/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"bookings",
+								""
+							]
+						},
+						"description": "Retrieve all bookings"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Booking By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/bookings/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"bookings",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "booking-uuid-here",
+									"description": "Booking UUID"
+								}
+							]
+						},
+						"description": "Retrieve a specific booking by ID"
+					},
+					"response": []
+				}
+			],
+			"description": "Booking management endpoints"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}
+

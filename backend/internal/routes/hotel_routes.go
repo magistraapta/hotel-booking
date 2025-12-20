@@ -2,6 +2,7 @@ package routes
 
 import (
 	"backend/internal/controller"
+	"backend/internal/middleware"
 	"backend/internal/repository"
 	"backend/internal/service"
 
@@ -16,7 +17,7 @@ func SetupHotelRoutes(router *gin.Engine, db *gorm.DB) {
 
 	hotelRouter := router.Group("/hotels")
 	{
-		hotelRouter.POST("/", hotelController.CreateHotel)
+		hotelRouter.POST("/", middleware.RequireAdmin(), hotelController.CreateHotel)
 		hotelRouter.GET("/", hotelController.GetAllHotels)
 		hotelRouter.GET("/:id", hotelController.GetHotelById)
 	}

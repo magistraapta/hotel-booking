@@ -2,6 +2,7 @@ package routes
 
 import (
 	"backend/internal/controller"
+	"backend/internal/middleware"
 	"backend/internal/repository"
 	"backend/internal/service"
 
@@ -10,14 +11,17 @@ import (
 )
 
 func SetupBookingRoutes(router *gin.Engine, db *gorm.DB) {
+
 	bookingRepository := repository.NewBookingRepository(db)
-	bookingService := service.NewBookingService(bookingRepository)
+	hotelRepository := repository.NewHotelRepository(db)
+	bookingService := service.NewBookingService(hotelRepository, bookingRepository)
 	bookingController := controller.NewBookingController(bookingService)
 
 	bookingRouter := router.Group("/bookings")
 	{
-		bookingRouter.POST("/", bookingController.CreateBooking)
+		bookingRouter.POST("/", middleware.RequireLogin(), bookingController.CreateBooking)
 		bookingRouter.GET("/", bookingController.GetAllBookings)
 		bookingRouter.GET("/:id", bookingController.GetBookingById)
+		bookingRouter.GET("/user/:user_id", bookingController.GetBookingsByUserId)
 	}
 }

@@ -21,27 +21,27 @@ func (c *AuthController) Login(ctx *gin.Context) {
 	var loginRequest domain.LoginRequest
 	err := ctx.ShouldBindJSON(&loginRequest)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, shared.ApiResponse{Error: err.Error()})
+		ctx.JSON(http.StatusBadRequest, shared.NewBadRequestResponse(err.Error(), ctx.Request.URL.Path))
 		return
 	}
 	loginResponse, err := c.authService.Login(loginRequest.Email, loginRequest.Password)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, shared.ApiResponse{Error: err.Error()})
+		ctx.JSON(http.StatusInternalServerError, shared.NewInternalServerErrorResponse(err.Error(), ctx.Request.URL.Path))
 		return
 	}
-	ctx.JSON(http.StatusOK, shared.ApiResponse{Message: "Login successful", Data: loginResponse})
+	ctx.JSON(http.StatusOK, shared.NewSuccessResponse("Login successful", loginResponse, http.StatusOK, ctx.Request.URL.Path))
 }
 
 func (c *AuthController) Register(ctx *gin.Context) {
 	var registerRequest domain.RegisterRequest
 	err := ctx.ShouldBindJSON(&registerRequest)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, shared.ApiResponse{Error: err.Error()})
+		ctx.JSON(http.StatusBadRequest, shared.NewBadRequestResponse(err.Error(), ctx.Request.URL.Path))
 		return
 	}
 	err = c.authService.Register(&registerRequest)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, shared.ApiResponse{Error: err.Error()})
+		ctx.JSON(http.StatusInternalServerError, shared.NewInternalServerErrorResponse(err.Error(), ctx.Request.URL.Path))
 		return
 	}
 

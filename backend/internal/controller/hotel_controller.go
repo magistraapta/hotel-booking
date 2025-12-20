@@ -22,27 +22,27 @@ func (c *HotelController) CreateHotel(ctx *gin.Context) {
 	ctx.ShouldBindJSON(&hotel)
 	err := c.hotelService.CreateHotel(&hotel)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, shared.ApiResponse{Error: err.Error()})
+		ctx.JSON(http.StatusInternalServerError, shared.NewInternalServerErrorResponse(err.Error(), ctx.Request.URL.Path))
 		return
 	}
-	ctx.JSON(http.StatusCreated, shared.ApiResponse{Message: "Hotel created successfully", Data: hotel})
+	ctx.JSON(http.StatusCreated, shared.NewCreatedResponse("Hotel created successfully", hotel, ctx.Request.URL.Path))
 }
 
 func (c *HotelController) GetAllHotels(ctx *gin.Context) {
 	hotels, err := c.hotelService.GetAllHotels()
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, shared.ApiResponse{Error: err.Error()})
+		ctx.JSON(http.StatusInternalServerError, shared.NewInternalServerErrorResponse(err.Error(), ctx.Request.URL.Path))
 		return
 	}
-	ctx.JSON(http.StatusOK, shared.ApiResponse{Message: "Hotels fetched successfully", Data: hotels})
+	ctx.JSON(http.StatusOK, shared.NewSuccessResponse("Hotels fetched successfully", hotels, http.StatusOK, ctx.Request.URL.Path))
 }
 
 func (c *HotelController) GetHotelById(ctx *gin.Context) {
 	id := ctx.Param("id")
 	hotel, err := c.hotelService.GetHotelById(id)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, shared.ApiResponse{Error: err.Error()})
+		ctx.JSON(http.StatusInternalServerError, shared.NewInternalServerErrorResponse(err.Error(), ctx.Request.URL.Path))
 		return
 	}
-	ctx.JSON(http.StatusOK, shared.ApiResponse{Message: "Hotel fetched successfully", Data: hotel})
+	ctx.JSON(http.StatusOK, shared.NewSuccessResponse("Hotel fetched successfully", hotel, http.StatusOK, ctx.Request.URL.Path))
 }

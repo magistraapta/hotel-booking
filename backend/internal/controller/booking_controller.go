@@ -18,6 +18,19 @@ func NewBookingController(bookingService service.BookingService) *BookingControl
 	return &BookingController{bookingService: bookingService}
 }
 
+// CreateBooking godoc
+// @Summary      Create a new booking
+// @Description  Create a new hotel booking (Requires authentication)
+// @Tags         Bookings
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        booking  body      domain.CreateBookingRequest  true  "Booking information"
+// @Success      201      {object}  shared.ApiResponse{data=domain.Booking}
+// @Failure      400      {object}  shared.ErrorResponse
+// @Failure      401      {object}  shared.ErrorResponse
+// @Failure      500      {object}  shared.ErrorResponse
+// @Router       /bookings [post]
 func (c *BookingController) CreateBooking(ctx *gin.Context) {
 	var booking domain.CreateBookingRequest
 	ctx.ShouldBindJSON(&booking)
@@ -29,6 +42,15 @@ func (c *BookingController) CreateBooking(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, shared.ApiResponse{Message: "Booking created successfully", Data: booking})
 }
 
+// GetAllBookings godoc
+// @Summary      Get all bookings
+// @Description  Retrieve a list of all bookings
+// @Tags         Bookings
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  shared.ApiResponse{data=[]domain.Booking}
+// @Failure      500  {object}  shared.ErrorResponse
+// @Router       /bookings [get]
 func (c *BookingController) GetAllBookings(ctx *gin.Context) {
 	bookings, err := c.bookingService.GetAllBookings()
 	if err != nil {
@@ -38,6 +60,17 @@ func (c *BookingController) GetAllBookings(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, shared.ApiResponse{Message: "Bookings fetched successfully", Data: bookings})
 }
 
+// GetBookingById godoc
+// @Summary      Get booking by ID
+// @Description  Retrieve a specific booking by its ID
+// @Tags         Bookings
+// @Accept       json
+// @Produce      json
+// @Param        id   path      string  true  "Booking ID"
+// @Success      200  {object}  shared.ApiResponse{data=domain.Booking}
+// @Failure      400  {object}  shared.ErrorResponse
+// @Failure      500  {object}  shared.ErrorResponse
+// @Router       /bookings/{id} [get]
 func (c *BookingController) GetBookingById(ctx *gin.Context) {
 	id := ctx.Param("id")
 	booking, err := c.bookingService.GetBookingById(id)
@@ -48,6 +81,17 @@ func (c *BookingController) GetBookingById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, shared.ApiResponse{Message: "Booking fetched successfully", Data: booking})
 }
 
+// GetBookingsByUserId godoc
+// @Summary      Get bookings by user ID
+// @Description  Retrieve all bookings for a specific user
+// @Tags         Bookings
+// @Accept       json
+// @Produce      json
+// @Param        user_id  path      string  true  "User ID"
+// @Success      200      {object}  shared.ApiResponse{data=[]domain.Booking}
+// @Failure      400      {object}  shared.ErrorResponse
+// @Failure      500      {object}  shared.ErrorResponse
+// @Router       /bookings/user/{user_id} [get]
 func (c *BookingController) GetBookingsByUserId(ctx *gin.Context) {
 	userId := ctx.Param("user_id")
 	bookings, err := c.bookingService.GetBookingsByUserId(userId)

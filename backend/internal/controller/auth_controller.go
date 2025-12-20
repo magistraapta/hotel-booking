@@ -17,6 +17,17 @@ func NewAuthController(authService service.IAuthService) *AuthController {
 	return &AuthController{authService: authService}
 }
 
+// Login godoc
+// @Summary      User login
+// @Description  Authenticate user and return JWT tokens
+// @Tags         Auth
+// @Accept       json
+// @Produce      json
+// @Param        loginRequest  body      domain.LoginRequest  true  "Login credentials"
+// @Success      200           {object}  shared.ApiResponse{data=domain.LoginResponse}
+// @Failure      400           {object}  shared.ErrorResponse
+// @Failure      500           {object}  shared.ErrorResponse
+// @Router       /auth/login [post]
 func (c *AuthController) Login(ctx *gin.Context) {
 	var loginRequest domain.LoginRequest
 	err := ctx.ShouldBindJSON(&loginRequest)
@@ -32,6 +43,17 @@ func (c *AuthController) Login(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, shared.NewSuccessResponse("Login successful", loginResponse, http.StatusOK, ctx.Request.URL.Path))
 }
 
+// Register godoc
+// @Summary      User registration
+// @Description  Register a new user account
+// @Tags         Auth
+// @Accept       json
+// @Produce      json
+// @Param        registerRequest  body      domain.RegisterRequest  true  "User registration data"
+// @Success      200              {object}  shared.ApiResponse
+// @Failure      400              {object}  shared.ErrorResponse
+// @Failure      500              {object}  shared.ErrorResponse
+// @Router       /auth/register [post]
 func (c *AuthController) Register(ctx *gin.Context) {
 	var registerRequest domain.RegisterRequest
 	err := ctx.ShouldBindJSON(&registerRequest)

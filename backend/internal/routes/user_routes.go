@@ -21,9 +21,30 @@ func SetupUserRoutes(router *gin.Engine, db *gorm.DB) {
 	{
 		userRouter.POST("/", userController.CreateUser)
 		// for testing
+		// TestAdminRoute godoc
+		// @Summary      Test admin route
+		// @Description  Test endpoint to verify admin authentication (for testing only)
+		// @Tags         Users
+		// @Accept       json
+		// @Produce      json
+		// @Security     BearerAuth
+		// @Success      200  {object}  shared.ApiResponse
+		// @Failure      401  {object}  shared.ErrorResponse
+		// @Failure      403  {object}  shared.ErrorResponse
+		// @Router       /users/admin [get]
 		userRouter.GET("/admin", middleware.RequireAdmin(), func(ctx *gin.Context) {
 			ctx.JSON(http.StatusOK, shared.ApiResponse{Message: "Admin route accessed successfully"})
 		})
+		// TestAuthRoute godoc
+		// @Summary      Test authentication route
+		// @Description  Test endpoint to verify user authentication (for testing only)
+		// @Tags         Users
+		// @Accept       json
+		// @Produce      json
+		// @Security     BearerAuth
+		// @Success      200  {object}  shared.ApiResponse
+		// @Failure      401  {object}  shared.ErrorResponse
+		// @Router       /users/test [get]
 		userRouter.GET("/test", middleware.RequireLogin(), func(ctx *gin.Context) {
 			ctx.JSON(http.StatusOK, shared.ApiResponse{Message: "Test route accessed successfully"})
 		})

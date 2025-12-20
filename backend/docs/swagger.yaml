@@ -1,0 +1,620 @@
+basePath: /
+definitions:
+  domain.Booking:
+    properties:
+      check_in_date:
+        type: string
+      check_out_date:
+        type: string
+      hotel_id:
+        type: string
+      id:
+        type: string
+      is_cancelled:
+        type: boolean
+      room_id:
+        type: string
+      total_price:
+        type: number
+      user_id:
+        type: string
+    required:
+    - check_in_date
+    - check_out_date
+    - hotel_id
+    - id
+    - is_cancelled
+    - room_id
+    - total_price
+    - user_id
+    type: object
+  domain.CreateBookingRequest:
+    properties:
+      check_in_date:
+        type: string
+      check_out_date:
+        type: string
+      hotel_id:
+        type: string
+      room_id:
+        type: string
+      user_id:
+        type: string
+    required:
+    - check_in_date
+    - check_out_date
+    - hotel_id
+    - room_id
+    - user_id
+    type: object
+  domain.Facility:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    required:
+    - id
+    - name
+    type: object
+  domain.Hotel:
+    properties:
+      address:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      rating:
+        type: number
+      rooms:
+        items:
+          $ref: '#/definitions/domain.Room'
+        type: array
+    required:
+    - address
+    - description
+    - id
+    - name
+    - rating
+    type: object
+  domain.LoginRequest:
+    properties:
+      email:
+        example: user@example.com
+        type: string
+      password:
+        example: password123
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  domain.LoginResponse:
+    properties:
+      access_token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        type: string
+      refresh_token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        type: string
+    required:
+    - access_token
+    - refresh_token
+    type: object
+  domain.RegisterRequest:
+    properties:
+      email:
+        example: user@example.com
+        type: string
+      password:
+        example: password123
+        type: string
+      username:
+        example: johndoe
+        type: string
+    required:
+    - email
+    - password
+    - username
+    type: object
+  domain.Room:
+    properties:
+      available:
+        type: boolean
+      description:
+        type: string
+      facilities:
+        items:
+          $ref: '#/definitions/domain.Facility'
+        type: array
+      hotel_id:
+        type: string
+      id:
+        type: string
+      price:
+        type: number
+      size:
+        type: integer
+    required:
+    - available
+    - description
+    - hotel_id
+    - id
+    - price
+    - size
+    type: object
+  domain.User:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      is_admin:
+        type: boolean
+      password:
+        type: string
+      updated_at:
+        type: string
+      username:
+        type: string
+    required:
+    - email
+    - id
+    - is_admin
+    - password
+    - username
+    type: object
+  shared.ApiResponse:
+    properties:
+      data: {}
+      message:
+        type: string
+      path:
+        type: string
+      status:
+        type: integer
+      success:
+        type: boolean
+      timestamp:
+        type: string
+    type: object
+  shared.ErrorResponse:
+    properties:
+      error:
+        description: Detailed error message
+        type: string
+      message:
+        type: string
+      path:
+        type: string
+      status:
+        type: integer
+      success:
+        type: boolean
+      timestamp:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@hotelbooking.com
+    name: API Support
+  description: A RESTful API for hotel booking management system
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Hotel Booking API
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user and return JWT tokens
+      parameters:
+      - description: Login credentials
+        in: body
+        name: loginRequest
+        required: true
+        schema:
+          $ref: '#/definitions/domain.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/shared.ApiResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.LoginResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+      summary: User login
+      tags:
+      - Auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user account
+      parameters:
+      - description: User registration data
+        in: body
+        name: registerRequest
+        required: true
+        schema:
+          $ref: '#/definitions/domain.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shared.ApiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+      summary: User registration
+      tags:
+      - Auth
+  /bookings:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of all bookings
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/shared.ApiResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.Booking'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+      summary: Get all bookings
+      tags:
+      - Bookings
+    post:
+      consumes:
+      - application/json
+      description: Create a new hotel booking (Requires authentication)
+      parameters:
+      - description: Booking information
+        in: body
+        name: booking
+        required: true
+        schema:
+          $ref: '#/definitions/domain.CreateBookingRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/shared.ApiResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Booking'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new booking
+      tags:
+      - Bookings
+  /bookings/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a specific booking by its ID
+      parameters:
+      - description: Booking ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/shared.ApiResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Booking'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+      summary: Get booking by ID
+      tags:
+      - Bookings
+  /bookings/user/{user_id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all bookings for a specific user
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/shared.ApiResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.Booking'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+      summary: Get bookings by user ID
+      tags:
+      - Bookings
+  /hotels:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of all hotels
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/shared.ApiResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.Hotel'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+      summary: Get all hotels
+      tags:
+      - Hotels
+    post:
+      consumes:
+      - application/json
+      description: Create a new hotel (Admin only)
+      parameters:
+      - description: Hotel information
+        in: body
+        name: hotel
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Hotel'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/shared.ApiResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Hotel'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new hotel
+      tags:
+      - Hotels
+  /hotels/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a specific hotel by its ID
+      parameters:
+      - description: Hotel ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/shared.ApiResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Hotel'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+      summary: Get hotel by ID
+      tags:
+      - Hotels
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/shared.ApiResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.User'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+      summary: Get all users
+      tags:
+      - Users
+    post:
+      consumes:
+      - application/json
+      description: Register a new user account
+      parameters:
+      - description: User information
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/domain.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/shared.ApiResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.User'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+      summary: Create a new user
+      tags:
+      - Users
+  /users/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a specific user by their ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/shared.ApiResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.User'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+      summary: Get user by ID
+      tags:
+      - Users
+securityDefinitions:
+  BearerAuth:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

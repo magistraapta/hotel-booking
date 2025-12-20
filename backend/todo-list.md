@@ -1,9 +1,10 @@
 # To-do List
 - [x] JWT Authentication
 - [x] Create booking endpoint
+- [x] Setup dockerfile
 - [ ] Setup prometheus
+- [ ] Fix room availability after creating order
 - [ ] Create rooms
-- [ ] Setup dockerfile
 - [ ] Setup auth testing
 - [ ] Setup TTL for booking
 - [ ] Setup CI/CD Pipelines

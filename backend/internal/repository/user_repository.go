@@ -12,6 +12,7 @@ type UserRepository interface {
 	CreateUser(user *domain.User) error
 	GetAllUsers() ([]domain.User, error)
 	GetUserById(id string) (*domain.User, error)
+	GetUserByEmail(email string) (*domain.User, error)
 }
 type userRepository struct {
 	db *gorm.DB
@@ -43,6 +44,14 @@ func (r *userRepository) GetAllUsers() ([]domain.User, error) {
 func (r *userRepository) GetUserById(id string) (*domain.User, error) {
 	var user domain.User
 	if err := r.db.First(&user, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+func (r *userRepository) GetUserByEmail(email string) (*domain.User, error) {
+	var user domain.User
+	if err := r.db.First(&user, "email = ?", email).Error; err != nil {
 		return nil, err
 	}
 	return &user, nil

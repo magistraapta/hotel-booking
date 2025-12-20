@@ -18,6 +18,7 @@ func main() {
 	routes.SetupHotelRoutes(router, db)
 	routes.SetupUserRoutes(router, db)
 	routes.SetupBookingRoutes(router, db)
+	routes.SetupAuthRoutes(router, db)
 
 	router.Run(":" + os.Getenv("SERVER_PORT"))
 }

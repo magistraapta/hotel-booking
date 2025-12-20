@@ -17,6 +17,7 @@ type AuthService struct {
 type IAuthService interface {
 	Login(email string, password string) (domain.LoginResponse, error)
 	Register(registerRequest *domain.RegisterRequest) error
+	RefreshToken(refreshToken string) (domain.LoginResponse, error)
 }
 
 func NewAuthService(userRepo repository.UserRepository) IAuthService {
@@ -58,4 +59,29 @@ func (s *AuthService) Register(registerRequest *domain.RegisterRequest) error {
 	user.CreatedAt = time.Now()
 	user.UpdatedAt = time.Now()
 	return s.userRepo.CreateUser(user)
+}
+
+func (s *AuthService) RefreshToken(refreshToken string) (domain.LoginResponse, error) {
+	// Validate the refresh token and extract user information
+	user, err := auth.ValidateRefreshToken(refreshToken)
+	if err != nil {
+		return domain.LoginResponse{}, err
+	}
+
+	// Get full user details from database to ensure user still exists
+	fullUser, err := s.userRepo.GetUserById(user.Id.String())
+	if err != nil {
+		return domain.LoginResponse{}, errors.New("user not found")
+	}
+
+	// Generate new access and refresh tokens
+	token, err := auth.GenerateToken(fullUser)
+	if err != nil {
+		return domain.LoginResponse{}, err
+	}
+
+	return domain.LoginResponse{
+		AccessToken:  token.AccessToken,
+		RefreshToken: token.RefreshToken,
+	}, nil
 }

@@ -104,6 +104,14 @@ definitions:
     - access_token
     - refresh_token
     type: object
+  domain.RefreshTokenRequest:
+    properties:
+      refresh_token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        type: string
+    required:
+    - refresh_token
+    type: object
   domain.RegisterRequest:
     properties:
       email:
@@ -245,6 +253,45 @@ paths:
           schema:
             $ref: '#/definitions/shared.ErrorResponse'
       summary: User login
+      tags:
+      - Auth
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Generate a new access token using a valid refresh token
+      parameters:
+      - description: Refresh token
+        in: body
+        name: refreshRequest
+        required: true
+        schema:
+          $ref: '#/definitions/domain.RefreshTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/shared.ApiResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.LoginResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+      summary: Refresh access token
       tags:
       - Auth
   /auth/register:

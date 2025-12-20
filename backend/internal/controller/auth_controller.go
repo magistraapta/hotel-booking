@@ -69,3 +69,32 @@ func (c *AuthController) Register(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, shared.ApiResponse{Message: "Registration successful"})
 }
+
+// RefreshToken godoc
+// @Summary      Refresh access token
+// @Description  Generate a new access token using a valid refresh token
+// @Tags         Auth
+// @Accept       json
+// @Produce      json
+// @Param        refreshRequest  body      domain.RefreshTokenRequest  true  "Refresh token"
+// @Success      200             {object}  shared.ApiResponse{data=domain.LoginResponse}
+// @Failure      400             {object}  shared.ErrorResponse
+// @Failure      401             {object}  shared.ErrorResponse
+// @Failure      500             {object}  shared.ErrorResponse
+// @Router       /auth/refresh [post]
+func (c *AuthController) RefreshToken(ctx *gin.Context) {
+	var refreshRequest domain.RefreshTokenRequest
+	err := ctx.ShouldBindJSON(&refreshRequest)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, shared.NewBadRequestResponse(err.Error(), ctx.Request.URL.Path))
+		return
+	}
+
+	loginResponse, err := c.authService.RefreshToken(refreshRequest.RefreshToken)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, shared.NewUnauthorizedResponse("Invalid or expired refresh token", ctx.Request.URL.Path))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, shared.NewSuccessResponse("Token refreshed successfully", loginResponse, http.StatusOK, ctx.Request.URL.Path))
+}

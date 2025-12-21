@@ -37,6 +37,7 @@ func main() {
 	config.SeedDatabase(db)
 
 	router := gin.Default()
+	config.SetupCORS(router)
 
 	// Swagger documentation route
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

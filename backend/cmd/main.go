@@ -6,6 +6,7 @@ import (
 	"backend/internal/routes"
 	"os"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -37,8 +38,8 @@ func main() {
 	config.SeedDatabase(db)
 
 	router := gin.Default()
-	config.SetupCORS(router)
 
+	router.Use(cors.Default())
 	// Swagger documentation route
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
